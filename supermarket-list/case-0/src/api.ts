@@ -1,4 +1,4 @@
-import {Item} from "./types";
+import type { Item } from "./types";
 
 export default {
   list: (): Promise<Item[]> =>
@@ -21,6 +21,6 @@ export default {
             completed: false,
           },
         ]);
-      }, 1000),
+      }, 1000)
     ),
 };
