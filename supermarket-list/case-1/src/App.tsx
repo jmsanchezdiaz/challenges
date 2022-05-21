@@ -1,6 +1,6 @@
-import type {Item} from "./types";
+import type { Item } from "./types";
 
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 
 import styles from "./App.module.scss";
 import api from "./api";
@@ -14,12 +14,24 @@ function App() {
 
   function handleToggle(id: Item["id"]) {
     setItems((items) =>
-      items.map((item) => (item.id === id ? {...item, completed: !item.completed} : item)),
+      items.map((item) =>
+        item.id === id ? { ...item, completed: !item.completed } : item
+      )
     );
   }
 
   function handleAdd(event: React.ChangeEvent<Form>) {
-    // Should implement
+    event.preventDefault();
+
+    const newItem: Item = {
+      id: Date.now(),
+      text: event.target.text.value,
+      completed: false,
+    };
+
+    setItems([...items, newItem]);
+
+    event.target.reset();
   }
 
   function handleRemove(id: Item["id"]) {
@@ -34,7 +46,7 @@ function App() {
     <main className={styles.main}>
       <h1>Supermarket list</h1>
       <form onSubmit={handleAdd}>
-        <input name="text" type="text" />
+        <input name="text" placeholder="Ingrese su tarea..." type="text" />
         <button>Add</button>
       </form>
       <ul>
@@ -44,7 +56,8 @@ function App() {
             className={item.completed ? styles.completed : ""}
             onClick={() => handleToggle(item.id)}
           >
-            {item.text} <button onClick={() => handleRemove(item.id)}>[X]</button>
+            {item.text}{" "}
+            <button onClick={() => handleRemove(item.id)}>[X]</button>
           </li>
         ))}
       </ul>
