@@ -1,10 +1,11 @@
-import type {Item} from "./types";
+import type { Item } from "./types";
 
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 
 import styles from "./App.module.scss";
 import api from "./api";
 
+const DELAY: number = 1000;
 interface Form extends HTMLFormElement {
   text: HTMLInputElement;
 }
@@ -14,21 +15,29 @@ function App() {
   const [isLoading, toggleLoading] = useState<boolean>(true);
 
   function handleToggle(id: Item["id"]) {
-    // Should implement
+    const mappedItems: Item[] = items.map((item) =>
+      item.id === id ? { ...item, completed: !item.completed } : item
+    );
+
+    setItems(mappedItems);
   }
 
   function handleAdd(event: React.ChangeEvent<Form>) {
     event.preventDefault();
+    const input: HTMLInputElement = event.target.text;
 
-    setItems((items) =>
-      items.concat({
-        id: +new Date(),
-        completed: false,
-        text: event.target.text.value,
-      }),
-    );
+    if (!input.value.length) return;
 
-    event.target.text.value = "";
+    setTimeout(() => {
+      setItems((items) =>
+        items.concat({
+          id: +new Date(),
+          completed: false,
+          text: input.value,
+        })
+      );
+      input.value = "";
+    }, DELAY);
   }
 
   function handleRemove(id: Item["id"]) {
@@ -48,7 +57,7 @@ function App() {
     <main className={styles.main}>
       <h1>Supermarket list</h1>
       <form onSubmit={handleAdd}>
-        <input name="text" type="text" />
+        <input required name="text" type="text" />
         <button>Add</button>
       </form>
       <ul>
@@ -58,7 +67,8 @@ function App() {
             className={item.completed ? styles.completed : ""}
             onClick={() => handleToggle(item.id)}
           >
-            {item.text} <button onClick={() => handleRemove(item.id)}>[X]</button>
+            {item.text}{" "}
+            <button onClick={() => handleRemove(item.id)}>[X]</button>
           </li>
         ))}
       </ul>
